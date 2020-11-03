@@ -8,9 +8,10 @@ import io from 'socket.io-client'
 import * as Location from 'expo-location'
 
 import api from './../../services/api'
+import { baseUrl } from './../../utils/baseUrl'
 
 // const socket = io('http://10.0.2.2:3333')
-const socket = io('http://192.168.100.35:3333')
+const socket = io(baseUrl.url)
 
 interface Unit {
   id: number;
@@ -96,6 +97,10 @@ const Points = () => {
     return 0;
   }
 
+  function getRegion(region: any) {
+    console.log('REGION', region);
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -121,6 +126,7 @@ const Points = () => {
                 latitudeDelta: 0.014,
                 longitudeDelta: 0.014
               }}
+              onRegionChangeComplete={getRegion}
             >
               { units.map(unit => (
                 <Marker

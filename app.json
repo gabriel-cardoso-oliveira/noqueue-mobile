@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "HelloWorld",
-    "slug": "mobile",
+    "name": "No Queue",
+    "slug": "noqueue",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +12,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#312F73"
+      "backgroundColor": "#3e3e3e"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,7 +21,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.campotv.noqueue",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#3e3e3e"
+      },
+      "package": "com.campotv.noqueue",
+      "versionCode": 1
     }
   }
 }

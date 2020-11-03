@@ -158,14 +158,26 @@ const Detail = () => {
 
             <View style={styles.separator} />
 
-            <Text style={styles.ratingTitle}>Deixe a sua avaliação:</Text>
+            <Text style={styles.ratingTitle}>Avaliações:</Text>
+
+            <AirbnbRating
+              count={5}
+              onFinishRating={(rating: number) => setRating(rating)}
+              reviews={["Péssimo", "Ruim", "Bom", "Ótimo", "Excelente"]}
+              defaultRating={4}
+              size={24}
+              isDisabled={true}
+            />
+            <Text style={styles.ratingCount}>56</Text>
+
+            <Text style={styles.ratingDescription}>Deixe a sua avaliação:</Text>
 
             <AirbnbRating
               count={5}
               onFinishRating={(rating: number) => setRating(rating)}
               reviews={["Péssimo", "Ruim", "Bom", "Ótimo", "Excelente"]}
               defaultRating={5}
-              size={26}
+              size={24}
             />
           </ScrollView>
         </SafeAreaView>
@@ -311,6 +323,23 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontFamily: 'Ubuntu_700Bold',
     marginTop: 20,
+  },
+
+  ratingDescription: {
+    // color: '#322153',
+    color: '#F2F2F2',
+    fontSize: 22,
+    fontFamily: 'Roboto_500Medium',
+    marginTop: 20,
+  },
+
+  ratingCount: {
+    fontFamily: 'Roboto_400Regular',
+    lineHeight: 28,
+    marginTop: 4,
+    // color: '#322153',
+    color: '#F2F2F2',
+    textAlign: 'center'
   },
 
   description: {
