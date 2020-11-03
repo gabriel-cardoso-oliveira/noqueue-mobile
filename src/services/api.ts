@@ -1,7 +1,8 @@
 import axios from 'axios'
+import { baseUrl } from './../utils/baseUrl'
 
 const api = axios.create({
-  baseURL: 'http://192.168.100.35:3333'
+  baseURL: baseUrl.url
   // baseURL: 'http://192.168.43.176:3333'
 })
 
