@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from 'react-na
 import MapView, { Marker } from 'react-native-maps'
 import io from 'socket.io-client'
 import * as Location from 'expo-location'
+import axios from 'axios'
 
 import api from './../../services/api'
 import { baseUrl } from './../../utils/baseUrl'
@@ -32,10 +33,25 @@ interface Password {
   total: number;
 }
 
+interface IBGEUfResponse {
+  sigla: string;
+  nome: string;
+}
+
+interface Region {
+  latitude: number;
+  latitudeDelta: number;
+  longitude: number;
+  longitudeDelta: number;
+}
+
 const Points = () => {
   const [units, setUnits] = useState<Unit[]>([])
   const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0])
   const [passwords, setPasswords] = useState<Password[]>([])
+  const [cityTemp, setCityTemp] = useState<String>('')
+  const [stateTemp, setStateTemp] = useState<String>('')
+  const [states, setStates] = useState([])
   const navigation = useNavigation()
   const route = useRoute()
 
@@ -62,6 +78,15 @@ const Points = () => {
     loadPosition()
   }, [])
 
+  function getUnits(city: string, uf: string) {
+    api.get('units', {
+      params: {
+        city: city,
+        uf: uf,
+      }
+    }).then(({ data }) => setUnits(data))
+  }
+
   useEffect(() => {
     api.get('units', {
       params: {
@@ -75,6 +100,17 @@ const Points = () => {
     api
     .get('passwords/count')
     .then(({ data }) => setPasswords(data))
+  }, [])
+
+  useEffect(() => {
+    axios
+      .get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
+      .then(({ data }) => setStates(data.map((uf: IBGEUfResponse) => {
+        return {
+          sigla: uf.sigla,
+          nome: uf.nome
+        };
+      })))
   }, [])
 
   socket.on('receivedPassword', (password: Password[]) => {
@@ -92,13 +128,28 @@ const Points = () => {
   function getPassword(unit_id: number) {
     const [password] = passwords.filter(pass => pass.unit_id === unit_id)
 
-    if (Object.keys(password).length) return password.total;
+    if (password && password.total) return password.total;
 
     return 0;
   }
 
-  function getRegion(region: any) {
-    console.log('REGION', region);
+  async function getRegion(region: Region) {
+    axios
+      .get(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${region.latitude}&lon=${region.longitude}`
+      )
+      .then(({ data }) => {
+        const { city, state } = data.address
+
+        if (state === stateTemp && city === cityTemp) return;
+
+        setStateTemp(state)
+        setCityTemp(city)
+
+        const [{ sigla }] = states.filter((uf: { nome: string; }) => uf.nome === state)
+
+        if (city && sigla) getUnits(city, sigla);
+      })
   }
 
   return (
