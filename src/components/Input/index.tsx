@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Feather as Icon } from '@expo/vector-icons'
+import { Feather as Icon } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
 
 import { Container, TInput } from './styles';

@@ -8,7 +8,8 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Picker
+  Picker,
+  TouchableOpacity
 } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
@@ -45,7 +46,7 @@ const Home = () => {
       .get<IBGECityResponse[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`)
       .then(({ data }) => setCities(data.map(city => city.nome)))
   }, [selectedUf])
-  
+
   function handleSelectedUf(value: string) {
     setSelectedUf(value)
   }
@@ -115,6 +116,10 @@ const Home = () => {
               Entrar
             </Text>
           </RectButton>
+
+          <TouchableOpacity style={styles.signLink} onPress={() => navigation.navigate('SignUp')}>
+            <Text style={styles.signLinkText} >Criar conta gratuita</Text>
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </KeyboardAvoidingView>
@@ -162,7 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     fontSize: 16,
   },
-  
+
   borderPicker: {
     height: 60,
     marginBottom: 8,
@@ -195,7 +200,17 @@ const styles = StyleSheet.create({
     color: '#F2F2F2',
     fontFamily: 'Roboto_500Medium',
     fontSize: 16,
-  }
+  },
+
+  signLink: {
+    marginTop: 16,
+  },
+
+  signLinkText: {
+    color: '#F2F2F2',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
 });
 
 export default Home;
