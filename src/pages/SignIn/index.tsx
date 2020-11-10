@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
+import { Feather as Icon } from '@expo/vector-icons';
 // import { useDispatch, useSelector } from 'react-redux';
 import {
   Container,
@@ -31,7 +32,7 @@ export default function SignIn({ navigation }: any) {
       <Image source={require('./../../assets/logo.png')}/>
       <Form>
         <FormInput
-          icon="mail-outline"
+          icon="mail"
           keyboardType="mail"
           autoCorrect={false}
           autoCapitalize="none"
@@ -59,6 +60,14 @@ export default function SignIn({ navigation }: any) {
 
         <SignLink onPress={() => navigation.navigate('SignUp')}>
           <SignLinkText>Criar conta gratuita</SignLinkText>
+        </SignLink>
+
+        <SignLink onPress={() => navigation.navigate('Home')}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <SignLinkText>Home </SignLinkText>
+
+            <Icon name="home" size={22} color="#3DD990"/>
+          </View>
         </SignLink>
       </Form>
     </Container>

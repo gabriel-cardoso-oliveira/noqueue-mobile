@@ -8,7 +8,7 @@ import { Container, TInput } from './styles';
 const Input = forwardRef(({ style, icon, ...rest }: any, ref) => {
   return (
     <Container style={style}>
-      {icon && <Icon name={icon} size={20} color="rgba(255, 255, 255, 0.6)" />}
+      {icon && <Icon name={icon} size={22} color="#3dd990" />}
       <TInput {...rest} ref={ref} />
     </Container>
   );

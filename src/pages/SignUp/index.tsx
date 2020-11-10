@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
+import { Feather as Icon } from '@expo/vector-icons';
 // import { useDispatch, useSelector } from 'react-redux';
 import {
   Container,
@@ -75,6 +76,14 @@ export default function SignUp({ navigation }: any) {
 
         <SignLink onPress={() => navigation.navigate('SignIn')}>
           <SignLinkText>Já tenho conta</SignLinkText>
+        </SignLink>
+
+        <SignLink onPress={() => navigation.navigate('Home')}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <SignLinkText>Home </SignLinkText>
+
+            <Icon name="home" size={22} color="#3DD990"/>
+          </View>
         </SignLink>
       </Form>
     </Container>
