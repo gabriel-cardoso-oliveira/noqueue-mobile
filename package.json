@@ -21,6 +21,7 @@
     "expo-font": "~8.1.0",
     "expo-location": "~8.1.0",
     "expo-mail-composer": "~8.1.0",
+    "prop-types": "^15.7.2",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.1.tar.gz",
@@ -36,7 +37,8 @@
     "react-native-svg-charts": "^5.4.0",
     "react-native-web": "~0.11.7",
     "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^2.3.0",
+    "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
@@ -45,6 +47,7 @@
     "@types/react-native-svg-charts": "^5.0.3",
     "@types/socket.io": "^2.1.11",
     "@types/socket.io-client": "^1.4.33",
+    "@types/styled-components": "^5.1.4",
     "babel-preset-expo": "~8.1.0",
     "typescript": "~3.8.3"
   },
