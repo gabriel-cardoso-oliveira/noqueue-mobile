@@ -185,8 +185,8 @@ const Detail = () => {
 
       <Modal
         isVisible={isModalVisible}
+        swipeDirection="down"
         deviceWidth={deviceWidth}
-        deviceHeight={deviceHeight}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -210,7 +210,13 @@ const Detail = () => {
               onKeyPress={() => setShow(true)}
             />
 
-            <Button title="Hide modal" onPress={toggleModal} />
+            <TouchableOpacity style={styles.opacityLink} onPress={toggleModal}>
+              <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                <Text style={styles.opacityLinkText}>Cancelar </Text>
+
+                <Icon name="x-circle" size={22} color="#8985F2"/>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -246,10 +252,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
+  opacityLink: {
+    marginTop: 16,
+  },
+
+  opacityLinkText: {
+    color: '#8985F2',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    fontSize: 16,
+  },
+
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     marginTop: 22
   },
 
@@ -288,10 +303,11 @@ const styles = StyleSheet.create({
   },
 
   modalTitle: {
-    marginBottom: 16,
-    fontSize: 20,
+    marginBottom: 4,
+    fontSize: 30,
     textAlign: 'center',
     fontFamily: 'Ubuntu_700Bold',
+    color: '#3DD990'
   },
 
   modalText: {
