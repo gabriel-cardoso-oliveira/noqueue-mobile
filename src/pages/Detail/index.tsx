@@ -45,6 +45,11 @@ interface Data {
   }];
 }
 
+interface Evaluation {
+  id: number;
+  star: number;
+}
+
 const Detail = () => {
   const [unit, setUnit] = useState<Unit>({} as Unit)
   const [dataChartsHour, setDataChartsHour] = useState<Data>({} as Data)
@@ -55,11 +60,40 @@ const Detail = () => {
   const [show, setShow] = useState(false)
   const [isModalVisible, setModalVisible] = useState(false)
   const [rating, setRating] = useState(0)
+  const [ratingTotal, setRatingTotal] = useState(0)
+  const [ratingMedia, setRatingMedia] = useState(0)
 
   const navigation = useNavigation()
   const route = useRoute()
 
   const routeParams = route.params as Params;
+
+  function getRatingFirst() {
+    api
+      .get('evaluation', {
+        params: {
+          unit_id: routeParams.unit_id,
+          user_id: 1
+        }
+      })
+      .then(({ data }) => setRating(data.star))
+  }
+
+  function getRatingTotal() {
+    api
+      .get('total/evaluation', {
+        params: {
+          unit_id: routeParams.unit_id
+        }
+      })
+      .then(({ data }) => setRatingTotal(data.total))
+  }
+
+  function getRatingMedia() {
+    api
+      .get(`evaluation/${routeParams.unit_id}`)
+      .then(({ data }) => setRatingMedia(data.media))
+  }
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -76,8 +110,14 @@ const Detail = () => {
     .get(`charts/week/${routeParams.unit_id}`)
     .then(({ data }) => setDataChartsWeek(data))
 
+    getRatingTotal();
+
+    getRatingMedia();
+
+    getRatingFirst();
+
     return () => abortController.abort();
-  }, [])
+  }, []);
 
   const chartConfig = {
     backgroundGradientFrom: '#212c26',
@@ -104,6 +144,22 @@ const Detail = () => {
   function toggleModal() {
     setModalVisible(!isModalVisible);
   };
+
+  async function handleRating(rating: Number) {
+    const data = {
+      star: rating,
+      user_id: 1,
+      unit_id: routeParams.unit_id,
+    };
+
+    await api.post('evaluation', data);
+
+    setRating(Number(rating));
+
+    getRatingMedia();
+
+    getRatingTotal();
+  }
 
   if (!dataChartsHour.labels || !dataChartsWeek.labels) return null;
 
@@ -162,21 +218,20 @@ const Detail = () => {
 
             <AirbnbRating
               count={5}
-              onFinishRating={(rating: number) => setRating(rating)}
               reviews={["Péssimo", "Ruim", "Bom", "Ótimo", "Excelente"]}
-              defaultRating={4}
+              defaultRating={ratingMedia}
               size={24}
               isDisabled={true}
             />
-            <Text style={styles.ratingCount}>56</Text>
+            <Text style={styles.ratingCount}>{ratingTotal || 0}</Text>
 
             <Text style={styles.ratingDescription}>Deixe a sua avaliação:</Text>
 
             <AirbnbRating
               count={5}
-              onFinishRating={(rating: number) => setRating(rating)}
+              onFinishRating={handleRating}
               reviews={["Péssimo", "Ruim", "Bom", "Ótimo", "Excelente"]}
-              defaultRating={5}
+              defaultRating={rating}
               size={24}
             />
           </ScrollView>
