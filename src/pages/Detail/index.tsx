@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Feather as Icon } from '@expo/vector-icons'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import React, { useEffect, useState } from 'react';
+import { Feather as Icon } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   View,
   StyleSheet,
@@ -11,16 +11,14 @@ import {
   SafeAreaView,
   ScrollView,
   Platform,
-  Button,
-  TextInput
-} from 'react-native'
-import Modal from 'react-native-modal'
-import { AirbnbRating } from 'react-native-ratings'
-import { RectButton } from 'react-native-gesture-handler'
-import { LineChart } from 'react-native-chart-kit'
-import Constants from 'expo-constants'
-import DateTimePicker from '@react-native-community/datetimepicker'
-import api from './../../services/api'
+} from 'react-native';
+import Modal from 'react-native-modal';
+import { AirbnbRating } from 'react-native-ratings';
+import { RectButton } from 'react-native-gesture-handler';
+import { LineChart } from 'react-native-chart-kit';
+import Constants from 'expo-constants';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import api from './../../services/api';
 
 interface Params {
   unit_id: number;
@@ -45,28 +43,50 @@ interface Data {
   }];
 }
 
-interface Evaluation {
-  id: number;
-  star: number;
-}
-
 const Detail = () => {
-  const [unit, setUnit] = useState<Unit>({} as Unit)
-  const [dataChartsHour, setDataChartsHour] = useState<Data>({} as Data)
-  const [dataChartsWeek, setDataChartsWeek] = useState<Data>({} as Data)
-  const [dataStart, setDataStart] = useState('14/09/2020')
-  const [dataEnd, setDataEnd] = useState('18/09/2020')
-  const [date, setDate] = useState(new Date())
-  const [show, setShow] = useState(false)
-  const [isModalVisible, setModalVisible] = useState(false)
-  const [rating, setRating] = useState(0)
-  const [ratingTotal, setRatingTotal] = useState(0)
-  const [ratingMedia, setRatingMedia] = useState(0)
+  const getNewDate = () => {
+    const date = new Date()
 
-  const navigation = useNavigation()
-  const route = useRoute()
+    const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
+
+    const monthTemp = date.getMonth() + 1;
+    const month = monthTemp >= 10 ? monthTemp : `0${monthTemp}`;
+
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
+
+  const newDate = getNewDate();
+
+  const [unit, setUnit] = useState<Unit>({} as Unit);
+  const [dataChartsHour, setDataChartsHour] = useState<Data>({} as Data);
+  const [dataChartsWeek, setDataChartsWeek] = useState<Data>({} as Data);
+  const [dataStart, setDataStart] = useState(newDate);
+  const [dataEnd, setDataEnd] = useState(newDate);
+  const [typeDate, setTypeDate] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [ratingTotal, setRatingTotal] = useState(0);
+  const [ratingMedia, setRatingMedia] = useState(0);
+
+  const navigation = useNavigation();
+  const route = useRoute();
 
   const routeParams = route.params as Params;
+
+  const formatDate = (date: Date) => {
+    const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
+
+    const monthTemp = date.getMonth() + 1;
+    const month = monthTemp >= 10 ? monthTemp : `0${monthTemp}`;
+
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
 
   function getRatingFirst() {
     api
@@ -76,7 +96,7 @@ const Detail = () => {
           user_id: 1
         }
       })
-      .then(({ data }) => setRating(data.star))
+      .then(({ data }) => setRating(data.star));
   }
 
   function getRatingTotal() {
@@ -86,29 +106,67 @@ const Detail = () => {
           unit_id: routeParams.unit_id
         }
       })
-      .then(({ data }) => setRatingTotal(data.total))
+      .then(({ data }) => setRatingTotal(data.total));
   }
 
   function getRatingMedia() {
     api
       .get(`evaluation/${routeParams.unit_id}`)
-      .then(({ data }) => setRatingMedia(data.media))
+      .then(({ data }) => setRatingMedia(data.media));
+  }
+
+  function getChartsHour() {
+    api
+    .get(`charts/hour/${routeParams.unit_id}`)
+    .then(({ data }) => setDataChartsHour(data));
+  }
+
+  function getChartsHourFilter(final: string) {
+    api
+    .get(`filter/hour`, {
+      params: {
+        id: routeParams.unit_id,
+        startDate: dataStart.split('-').reverse().join('-'),
+        finalDate: final.split('-').reverse().join('-')
+      }
+    })
+    .then(({ data }) => setDataChartsHour(data));
+  }
+
+  function getChartsWeek() {
+    api
+    .get(`charts/week/${routeParams.unit_id}`)
+    .then(({ data }) => setDataChartsWeek(data));
+  }
+
+  function getChartsWeekFilter(final: string) {
+    console.log('PARAMS', {
+      id: routeParams.unit_id,
+      startDate: dataStart.split('-').reverse().join('-'),
+      finalDate: final.split('-').reverse().join('-')
+    });
+
+    api
+    .get(`filter/week`, {
+      params: {
+        id: routeParams.unit_id,
+        startDate: dataStart.split('-').reverse().join('-'),
+        finalDate: final.split('-').reverse().join('-')
+      }
+    })
+    .then(({ data }) => setDataChartsWeek(data));
   }
 
   useEffect(() => {
-    const abortController = new AbortController()
+    const abortController = new AbortController();
 
     api
     .get(`units/${routeParams.unit_id}`)
-    .then(({ data }) => setUnit(data))
+    .then(({ data }) => setUnit(data));
 
-    api
-    .get(`charts/hour/${routeParams.unit_id}`)
-    .then(({ data }) => setDataChartsHour(data))
+    getChartsHour();
 
-    api
-    .get(`charts/week/${routeParams.unit_id}`)
-    .then(({ data }) => setDataChartsWeek(data))
+    getChartsWeek();
 
     getRatingTotal();
 
@@ -122,28 +180,45 @@ const Detail = () => {
   const chartConfig = {
     backgroundGradientFrom: '#212c26',
     backgroundGradientTo: '#000000',
-    // color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`
-    color: (opacity = 1) => `rgba(61, 217, 144, ${opacity})`
+    color: (opacity = 1) => `rgba(61, 217, 144, ${opacity})`,
   };
 
   const screenWidth = Dimensions.get('window').width - 64;
 
   const deviceWidth = Dimensions.get("window").width;
-  const deviceHeight = Dimensions.get("window").height;
 
   function handleNavigateBack() {
-    navigation.goBack()
+    navigation.goBack();
   }
 
   function onChangeDatePicker(event: any, selectedDate: any) {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
+
+    const formattedDate = formatDate(currentDate);
+
+    if (typeDate === 'start') {
+      return setDataStart(formattedDate);
+    }
+
+    setDataEnd(formattedDate);
+
+    getChartsWeekFilter(formattedDate);
+
+    getChartsHourFilter(formattedDate);
+
+    return setModalVisible(false);
   }
 
   function toggleModal() {
     setModalVisible(!isModalVisible);
   };
+
+  function selectedDate(type: string) {
+    setTypeDate(type);
+    setShow(true);
+  }
 
   async function handleRating(rating: Number) {
     const data = {
@@ -248,22 +323,20 @@ const Detail = () => {
             <Text style={styles.modalTitle}>Filtro</Text>
 
             <Text style={styles.modalText}>Data Início</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Data início"
-              autoCorrect={false}
-              value={dataStart}
-              onKeyPress={() => setShow(true)}
-            />
+            <View style={styles.input}>
+              <Text
+                style={styles.textInput}
+                onPress={() => selectedDate('start')}
+              >{dataStart}</Text>
+            </View>
 
             <Text style={styles.modalText}>Data Fim</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Data fim"
-              autoCorrect={false}
-              value={dataEnd}
-              onKeyPress={() => setShow(true)}
-            />
+            <View style={styles.input}>
+              <Text
+                style={styles.textInput}
+                onPress={() => selectedDate('end')}
+              >{dataEnd}</Text>
+            </View>
 
             <TouchableOpacity style={styles.opacityLink} onPress={toggleModal}>
               <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -304,7 +377,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 8,
     paddingHorizontal: 24,
+  },
+
+  textInput: {
     fontSize: 16,
+    marginTop: 20,
   },
 
   opacityLink: {
